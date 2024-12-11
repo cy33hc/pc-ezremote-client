@@ -1,6 +1,6 @@
 # ezRemote Client for Steam Gamemode
 
-ezRemote Client is a File Manager application that allows you to connect your Linux Handheld to remote FTP/SFTP, SMB(Windows Share), NFS, WebDAV, HTTP servers(Apache/Nginx/IIS/RClone etc...), Archive.org and Myrient to transfer files. The interface is inspired by Filezilla client which provides a commander like GUI. This is a port from the vita, ps3, ps4 and switch.
+ezRemote Client is a controller friendly File Manager application that allows you to connect your Linux Handheld to remote FTP/SFTP, SMB(Windows Share), NFS, WebDAV, HTTP servers(Apache/Nginx/IIS/RClone etc...), Archive.org and Myrient to transfer files. The interface is inspired by Filezilla client which provides a commander like GUI. This is a port from the vita, ps3, ps4 and switch.
 
 App is designed to run in Steam GameScope mode, so you can download/upload/copy/delete/paste/extract/compress files just using the controller and touch screen.
 
