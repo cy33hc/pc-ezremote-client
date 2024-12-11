@@ -95,7 +95,7 @@ Tested with following WebDAV server:
 ## Features Native Application##
  - Manage/Transfer files back and forth on FTP/SFTP/SMB/NFS/WebDAV/HTTP server
  - Support for connecting to Http Servers like (Apache/Nginx,Microsoft IIS, Serve) with html directory listings to download files.
- - Support for listing and downloading files from Archive.org
+ - Support for listing and downloading files from Archive.org and Myrient
  - Create Zip files
  - Extract from zip, 7zip, rar, tar, tar.gz files
  - File management function include cut/copy/paste/rename/delete/new folder/file
