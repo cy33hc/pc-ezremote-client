@@ -19,7 +19,7 @@ std::vector<DirEntry> ApacheClient::ListDir(const std::string &path)
     memset(&entry, 0, sizeof(DirEntry));
     if (path[path.length() - 1] == '/' && path.length() > 1)
     {
-        strlcpy(entry.directory, path.c_str(), path.length() - 1);
+        strncpy(entry.directory, path.c_str(), path.length() - 1);
     }
     else
     {
