@@ -136,8 +136,8 @@ namespace CONFIG
         struct passwd *pw = getpwuid(getuid());
         snprintf(g_data_path, 256, "%s/%s", pw->pw_dir, APP_ID);
         snprintf(config_ini_path, 256, "%s/%s/config.ini", pw->pw_dir, APP_ID);
-        snprintf(default_temp_folder, 256, "%s/%s/tmp", pw->pw_dir, APP_ID);
-        snprintf(default_compress_folder, 256, "%s/%s/compressed_files", pw->pw_dir, APP_ID);
+        snprintf(default_temp_folder, 256, "%s/Downloads", pw->pw_dir);
+        snprintf(default_compress_folder, 256, "%s/Downloads", pw->pw_dir);
 
         if (!FS::FolderExists(g_data_path))
         {
@@ -317,6 +317,11 @@ namespace CONFIG
             encrypted_api_key = std::string(realdebrid_api_key);
         WriteString(CONFIG_GLOBAL, CONFIG_REALDEBRID_API_KEY, encrypted_api_key.c_str());
 
+        if (!FS::FolderExists(temp_folder))
+        {
+            FS::MkDirs(temp_folder);
+        }
+        
         WriteString(CONFIG_GLOBAL, CONFIG_TMP_FOLDER_PATH, temp_folder);
         WriteBool(CONFIG_GLOBAL, CONFIG_SHOW_HIDDEN_FILES, show_hidden_files);
         WriteString(CONFIG_GLOBAL, CONFIG_LANGUAGE, language);

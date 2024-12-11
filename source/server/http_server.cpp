@@ -691,6 +691,7 @@ namespace HttpServer
                 if (!FS::MkDirs(compressed_file_path))
                 {
                     failed(res, 200, "Failed to create zip");
+                    return;
                 }
             }
 
@@ -1012,7 +1013,7 @@ namespace HttpServer
 			std::string host = download_url.substr(0, root_pos);
 			std::string path = download_url.substr(root_pos);
             std::string filename = BaseClient::UnEscape( path.substr(path.find_last_of("/")+1, path.find_first_of("?")-(path.find_last_of("/")+1)));
-            std::string file_path = std::string(local_directory) + "/" + filename;
+            std::string file_path = std::string(temp_folder) + "/" + filename;
 
             BaseClient *baseclient = new BaseClient();
             baseclient->Connect(host, "", "");
