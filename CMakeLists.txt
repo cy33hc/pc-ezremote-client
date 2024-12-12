@@ -88,9 +88,9 @@ add_custom_command(OUTPUT ${APPDIR}
 )
 
 add_custom_target(appimage
-   COMMAND rm -f AppDir/usr/bin/ezremote-client
-   COMMAND rm -f ezremote-client.AppImage
-   COMMAND linuxdeploy --appdir AppDir -e ./ezremote-client
+   COMMAND rm -f ${APPDIR}/usr/bin/ezremote-client
+   COMMAND rm -f ezRemote_Client*.AppImage
+   COMMAND linuxdeploy --appdir ${APPDIR} -e ./ezremote-client
    COMMAND appimagetool AppDir
 
    DEPENDS ${APPDIR}
