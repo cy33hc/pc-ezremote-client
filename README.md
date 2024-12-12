@@ -84,7 +84,7 @@ To distinguish between FTP, SFTP, SMB, NFS, WebDAV or HTTP, the URL must be pref
 - For Myrient, enter the following URL https://myrient.erista.me/files in the server field
 
 Tested with following WebDAV server:
- - **(Recommeded)** [Dufs](https://github.com/sigoden/dufs) - For hosting your own WebDAV server. (Recommended since this allow anonymous access which is required for Remote Package Install)
+ - **(Recommeded)** [Dufs](https://github.com/sigoden/dufs) - For hosting your own WebDAV server.
  - [Rclone](https://rclone.org/)
  - [SFTPgo](https://github.com/drakkan/sftpgo) - For local hosted WebDAV server. Can also be used as a webdav frontend for Cloud Storage like AWS S3, Azure Blob or Google Storage.
  - box.com (Note: delete folder does not work. This is an issue with box.com and not the app)
