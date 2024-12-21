@@ -26,7 +26,7 @@ namespace GUI
 					done = true;
 			}
 
-			ImGui_ImplSDLRenderer_NewFrame();
+			ImGui_ImplSDLRenderer2_NewFrame();
 			ImGui_ImplSDL2_NewFrame();
 
 			ImGui::NewFrame();
@@ -43,7 +43,7 @@ namespace GUI
 			}
 
 			ImGui::Render();
-			ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+			ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
 			SDL_RenderPresent(renderer);
 		}
 		return 0;

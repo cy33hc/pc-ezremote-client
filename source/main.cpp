@@ -214,16 +214,20 @@ int main()
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-	ImGui_ImplSDLRenderer_Init(renderer);
-	ImGui_ImplSDLRenderer_CreateFontsTexture();
+	ImGui_ImplSDLRenderer2_Init(renderer);
+	ImGui_ImplSDLRenderer2_CreateFontsTexture();
 
 	atexit(terminate);
 
 	GUI::RenderLoop(renderer);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
 
-	ImGui::DestroyContext();
+    ImGui_ImplSDLRenderer2_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
 	return 0;
 }

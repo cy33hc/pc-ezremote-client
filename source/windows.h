@@ -1,7 +1,6 @@
 #ifndef EZ_WINDOWS_H
 #define EZ_WINDOWS_H
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <set>
 #include "imgui.h"
 #include "imgui_internal.h"

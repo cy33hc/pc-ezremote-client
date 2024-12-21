@@ -6,7 +6,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDONT_HAVE_STRUPR")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wl,--copy-dt-needed-entries")
 
 add_definitions(-DCPPHTTPLIB_OPENSSL_SUPPORT)
-add_definitions(-DCPPHTTPLIB_THREAD_POOL_COUNT=16)
+add_definitions(-DCPPHTTPLIB_THREAD_POOL_COUNT=32)
+add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
 
 include_directories(
   source
