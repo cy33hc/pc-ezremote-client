@@ -137,13 +137,13 @@ namespace Dialog
     ImGui::SetNextWindowSizeConstraints(ImVec2(Windows::scaleX(1000), Windows::scaleX(50)), ImVec2(Windows::scaleX(1000), Windows::scaleX(200)), NULL, NULL);
     if (ImGui::BeginPopupModal(str_id, NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar))
     {
-      ImGui::SetNextItemWidth(Windows::scaleX(1000));
+      ImGui::SetNextItemWidth(Windows::scaleX(980));
       if (ImGui::IsWindowAppearing())
       {
         ImGui::SetKeyboardFocusHere();
         ImGuiIO &io = ImGui::GetIO();
       }
-      ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + Windows::scaleX(1000));
+      ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + Windows::scaleX(980));
       ImGui::InputText("##inputTextBuffer", (char *)inputTextBuffer, sizeof(inputTextBuffer));
 
       if (ImGui::IsKeyPressed(ImGuiKey_Escape) || ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight))
