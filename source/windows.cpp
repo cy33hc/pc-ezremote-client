@@ -1533,7 +1533,7 @@ namespace Windows
                     snprintf(id, 256, "%s", "*********************************************##alldebrid_api_key");
                 else
                     snprintf(id, 256, "%s", "##alldebrid_api_key");
-                if (ImGui::Button(id, ImVec2(scaleX(835-width), 0)))
+                if (ImGui::Button(id, ImVec2(scaleX(855-width), 0)))
                 {
                     ResetImeCallbacks();
                     ime_single_field = alldebrid_api_key;
@@ -1560,7 +1560,7 @@ namespace Windows
                     snprintf(id, 256, "%s", "*********************************************##realdebrid_api_key");
                 else
                     snprintf(id, 256, "%s", "##realdebrid_api_key");
-                if (ImGui::Button(id, ImVec2(scaleX(835-width), 0)))
+                if (ImGui::Button(id, ImVec2(scaleX(855-width), 0)))
                 {
                     ResetImeCallbacks();
                     ime_single_field = realdebrid_api_key;
