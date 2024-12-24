@@ -140,7 +140,7 @@ Ctrl-Q - Exit Application
 ## Multi Language Support
 The appplication support following languages.
 
-**Note:** Translations are not complete for some languagess. Please help by downloading this [Template](https://github.com/cy33hc/pc-ezremote-client/blob/master/data/usr/share/ezremote-client/assets/langs/English.ini), make your changes and submit an issue with the file attached for the language.
+**Note:** Translations are not complete for some languagess. Please help by downloading this [Template](https://github.com/cy33hc/pc-ezremote-client/blob/master/data/ezremote-client/assets/langs/English.ini), make your changes and submit an issue with the file attached for the language.
 
 The following languages are supported.
 ```
