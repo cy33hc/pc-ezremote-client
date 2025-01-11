@@ -127,7 +127,7 @@
 
 static uint32_t previous_down = 0;
 static int repeat_count = 0;
-static int repeat_delay = 40;
+static int repeat_delay = 70;
 static uint64_t previous_time = 0;
 
 // SDL Data
