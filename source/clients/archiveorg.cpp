@@ -243,6 +243,13 @@ std::vector<DirEntry> ArchiveOrgClient::ListDir(const std::string &path)
             // td0 contains the <a> tag
             td_element = lxb_dom_collection_element(td_collection, 0);
             lxb_dom_node_t *a_node = NextChildElement(td_element);
+            // there is no a_node in protected links
+            if (a_node == nullptr)
+            {
+                lxb_dom_collection_destroy(td_collection, true);
+                continue;
+            }
+
             value = lxb_dom_element_local_name(lxb_dom_interface_element(a_node), &value_len);
             tmp_string = std::string((const char *)value, value_len);
             if (tmp_string.compare("a") != 0)
