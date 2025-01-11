@@ -14,7 +14,119 @@ using httplib::Client;
 using httplib::Headers;
 using httplib::Result;
 
+struct InsensitiveCompare
+{
+    bool operator()(const std::string &a, const std::string &b) const
+    {
+        return strcasecmp(a.c_str(), b.c_str()) < 0;
+    }
+};
+
 static std::map<std::string, int> month_map = {{"Jan", 1}, {"Feb", 2}, {"Mar", 3}, {"Apr", 4}, {"May", 5}, {"Jun", 6}, {"Jul", 7}, {"Aug", 8}, {"Sep", 9}, {"Oct", 10}, {"Nov", 11}, {"Dec", 12}};
+static std::set<std::string, InsensitiveCompare> ignore_cookie_keys = {"path", "expires", "max-age", "domain", "secure"};
+
+std::string ArchiveOrgClient::GenerateRandomId(const int len)
+{
+    static const char alphanum[] = "0123456789abcdef";
+    std::string tmp_s;
+    tmp_s.reserve(len);
+
+    for (int i = 0; i < len; ++i) {
+        tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+    
+    return tmp_s;
+}
+
+int ArchiveOrgClient::Connect(const std::string &url, const std::string &username, const std::string &password)
+{
+    this->host_url = url;
+    size_t scheme_pos = url.find("://");
+    size_t root_pos = url.find("/", scheme_pos + 3);
+    if (root_pos != std::string::npos)
+    {
+        this->host_url = url.substr(0, root_pos);
+        this->base_path = url.substr(root_pos);
+    }
+    client = new httplib::Client(this->host_url);
+    client->set_keep_alive(true);
+    client->set_follow_location(true);
+    client->set_connection_timeout(30);
+    client->set_read_timeout(30);
+    client->enable_server_certificate_verification(false);
+
+    this->cookies = {
+        {"donation-identifier", GenerateRandomId(32)},
+        {"test-cookie", "1"},
+        {"abtest-identifier", GenerateRandomId(32)}
+    };
+
+    if (username.length() > 0)
+        return Login(username, password);
+    else if (Ping())
+        this->connected = true;
+    return 1;
+}
+
+int ArchiveOrgClient::Login(const std::string &username, const std::string &password)
+{
+    std::string url = std::string("/account/login");
+    Headers headers = {{ "User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"}};
+    SetCookies(headers);
+
+    MultipartFormDataItems items = {
+        {"username", username, "", ""},
+        {"password", password, "", ""},
+        {"remember", "true", "", ""},
+        {"referer", "https://archive.org/", "", ""},
+        {"login", "true", "", ""},
+        {"submit_by_js", "true", "", ""}};
+
+    if (auto res = client->Post(url, headers, items))
+    {
+        if (HTTP_SUCCESS(res->status))
+        {
+            if (res->has_header("Set-Cookie"))
+            {
+                int cookies_count = res->get_header_value_count("Set-Cookie");
+
+                for (int i = 0; i < cookies_count; i++)
+                {
+                    std::string cookie_str = res->get_header_value("Set-Cookie", "", i);
+
+                    std::vector<std::string> cookies = Util::Split(cookie_str, ";");
+                    for (std::vector<std::string>::iterator it = cookies.begin(); it != cookies.end();)
+                    {
+                        std::vector<std::string> cookie = Util::Split(*it, "=");
+                        std::string key = Util::Trim(cookie[0], " ");
+                        if (ignore_cookie_keys.find(key) == ignore_cookie_keys.end())
+                        {
+                            if (cookie.size() > 1)
+                                this->cookies[key] = Util::Trim(cookie[1], " ");
+                            else
+                                this->cookies[key] = "";
+                        }
+                        ++it;
+                    }
+                }
+                this->connected = true;
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 std::vector<DirEntry> ArchiveOrgClient::ListDir(const std::string &path)
 {
@@ -22,9 +134,11 @@ std::vector<DirEntry> ArchiveOrgClient::ListDir(const std::string &path)
     DirEntry entry;
     Util::SetupPreviousFolder(path, &entry);
     out.push_back(entry);
+    Headers headers;
+    SetCookies(headers);
 
     std::string encoded_path = httplib::detail::encode_url(GetFullPath(path) + "/");
-    if (auto res = client->Get(encoded_path))
+    if (auto res = client->Get(encoded_path, headers))
     {
         lxb_status_t status;
         lxb_dom_attr_t *attr;
@@ -141,8 +255,8 @@ std::vector<DirEntry> ArchiveOrgClient::ListDir(const std::string &path)
             }
             value = lxb_dom_element_get_attribute(lxb_dom_interface_element(a_node), (const lxb_char_t *)"href", 4, &value_len);
             tmp_string = std::string((const char *)value, value_len);
-            if (tmp_string[tmp_string.length()-1] == '/')
-                tmp_string = tmp_string.substr(0, tmp_string.length()-1);
+            if (tmp_string[tmp_string.length() - 1] == '/')
+                tmp_string = tmp_string.substr(0, tmp_string.length() - 1);
             tmp_string = BaseClient::UnEscape(tmp_string);
             snprintf(entry.name, 256, "%s", tmp_string.c_str());
             snprintf(entry.directory, 512, "%s", path.c_str());
@@ -196,24 +310,25 @@ std::vector<DirEntry> ArchiveOrgClient::ListDir(const std::string &path)
                 entry.isDir = false;
                 entry.selectable = true;
                 uint64_t multiplier = 0;
-                std::string size_formatted = tmp_string.substr(0, tmp_string.size()-1);
+                std::string size_formatted = tmp_string.substr(0, tmp_string.size() - 1);
                 Util::ReplaceAll(size_formatted, ",", "");
                 float fsize = std::stof(size_formatted);
-                switch (tmp_string[tmp_string.size()-1]) {
-                    case 'B':
-                        multiplier = 1;
-                        break;
-                    case 'K':
-                        multiplier = 1024;
-                        break;
-                    case 'M':
-                        multiplier = 1048576;
-                        break;
-                    case 'G':
-                        multiplier = 1073741824;
-                        break;
-                    default:
-                        multiplier = 1;
+                switch (tmp_string[tmp_string.size() - 1])
+                {
+                case 'B':
+                    multiplier = 1;
+                    break;
+                case 'K':
+                    multiplier = 1024;
+                    break;
+                case 'M':
+                    multiplier = 1048576;
+                    break;
+                case 'G':
+                    multiplier = 1073741824;
+                    break;
+                default:
+                    multiplier = 1;
                 }
                 entry.file_size = fsize * multiplier;
                 DirEntry::SetDisplaySize(&entry);

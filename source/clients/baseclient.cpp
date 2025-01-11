@@ -20,6 +20,26 @@ BaseClient::~BaseClient()
         delete client;
 };
 
+int BaseClient::SetCookies(Headers &headers)
+{
+    if (this->cookies.size() > 0)
+    {
+        std::string cookie;
+        for (std::map<std::string, std::string>::iterator it = this->cookies.begin(); it != this->cookies.end();)
+        {
+            cookie.append(it->first).append("=").append(it->second);
+            if (std::next(it, 1) != this->cookies.end())
+            {
+                cookie.append("; ");
+            }
+            ++it;
+        }
+        headers.emplace("Cookie", cookie);
+    }
+
+    return 1;
+}
+
 int BaseClient::Connect(const std::string &url, const std::string &username, const std::string &password)
 {
     this->host_url = url;
@@ -81,7 +101,10 @@ int BaseClient::Rmdir(const std::string &path, bool recursive)
 
 int BaseClient::Size(const std::string &path, int64_t *size)
 {
-    if (auto res = client->Head(GetFullPath(path)))
+    Headers headers;
+    SetCookies(headers);
+
+    if (auto res = client->Head(GetFullPath(path), headers))
     {
         if (HTTP_SUCCESS(res->status))
         {
@@ -94,6 +117,8 @@ int BaseClient::Size(const std::string &path, int64_t *size)
              // example: Content-Range: bytes 0-10/4372785
         {
             Headers headers = {{"Range", "bytes=0-1"}};
+            SetCookies(headers);
+
             if (auto range_res = client->Get(GetFullPath(path), headers))
             {
                 if (HTTP_SUCCESS(range_res->status))
@@ -124,8 +149,10 @@ int BaseClient::Get(const std::string &outputfile, const std::string &path, uint
     std::ofstream file_stream(outputfile, std::ios::binary);
     bytes_transfered = 0;
     prev_tick = GetMyTick();
+    Headers headers;
+    SetCookies(headers);
 
-    if (auto res = client->Get(GetFullPath(path),
+    if (auto res = client->Get(GetFullPath(path), headers,
                                [&](const char *data, size_t data_length)
                                {
                                    file_stream.write(data, data_length);
@@ -145,7 +172,10 @@ int BaseClient::Get(const std::string &outputfile, const std::string &path, uint
 
 int BaseClient::Get(SplitFile *split_file, const std::string &path, uint64_t offset)
 {
-    if (auto res = client->Get(GetFullPath(path),
+    Headers headers;
+    SetCookies(headers);
+
+    if (auto res = client->Get(GetFullPath(path), headers,
                                [&](const char *data, size_t data_length)
                                {
                                    if (!split_file->IsClosed())
@@ -171,6 +201,8 @@ int BaseClient::GetRange(const std::string &path, DataSink &sink, uint64_t size,
     char range_header[128];
     snprintf(range_header, 128, "bytes=%lu-%lu", offset, offset + size - 1);
     Headers headers = {{"Range", range_header}};
+    SetCookies(headers);
+
     size_t bytes_read = 0;
     if (auto res = client->Get(GetFullPath(path), headers,
                                [&](const char *data, size_t data_length)
@@ -194,6 +226,8 @@ int BaseClient::GetRange(const std::string &path, void *buffer, uint64_t size, u
     char range_header[128];
     snprintf(range_header, 128, "bytes=%lu-%lu", offset, offset + size - 1);
     Headers headers = {{"Range", range_header}};
+    SetCookies(headers);
+
     size_t bytes_read = 0;
     std::vector<char> body;
     if (auto res = client->Get(GetFullPath(path), headers,
@@ -253,6 +287,8 @@ int BaseClient::Head(const std::string &path, void *buffer, uint64_t len)
     char range_header[128];
     snprintf(range_header, 128, "bytes=%lu-%lu", 0L, len - 1);
     Headers headers = {{"Range", range_header}};
+    SetCookies(headers);
+
     size_t bytes_read = 0;
     std::vector<char> body;
     if (auto res = client->Get(GetFullPath(path), headers,
