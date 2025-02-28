@@ -77,7 +77,7 @@ namespace Util
     static inline void SetupPreviousFolder(const std::string &path, DirEntry *entry)
     {
         memset(entry, 0, sizeof(DirEntry));
-        if (path[path.length() - 1] == '/' && path.length() > 1)
+        if (path.length() > 1 && path[path.length() - 1] == '/')
         {
             strncpy(entry->directory, path.c_str(), path.length() - 1);
         }

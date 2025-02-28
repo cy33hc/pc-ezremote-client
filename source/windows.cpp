@@ -2057,6 +2057,10 @@ namespace Windows
             {
                 snprintf(remote_settings->http_server_type, 24, "%s", HTTP_SERVER_MYRIENT);
             }
+            else if (strncasecmp(remote_settings->server, "https://github.com/", 19) == 0)
+            {
+                snprintf(remote_settings->http_server_type, 24, "%s", HTTP_SERVER_GITHUB);
+            }
         }
     }
 

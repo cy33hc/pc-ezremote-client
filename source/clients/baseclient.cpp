@@ -53,9 +53,8 @@ int BaseClient::Connect(const std::string &url, const std::string &username, con
     client = new httplib::Client(this->host_url);
     if (username.length() > 0)
         client->set_basic_auth(username, password);
-    client->set_keep_alive(true);
     client->set_follow_location(true);
-    client->set_connection_timeout(30);
+    client->set_connection_timeout(10);
     client->set_read_timeout(30);
     client->enable_server_certificate_verification(false);
     if (Ping())
