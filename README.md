@@ -83,6 +83,9 @@ To distinguish between FTP, SFTP, SMB, NFS, WebDAV or HTTP, the URL must be pref
 
 - For Myrient, enter the following URL https://myrient.erista.me/files in the server field
 
+- Support for browse and download  release artifacts from github repos. Under the server just enter the git repo of the homebrew eg https://github.com/cy33hc/ps4-ezremote-client
+  ![image](https://github.com/user-attachments/assets/f8e931ea-f1d1-4af8-aed5-b0dfe661a230)
+
 Tested with following WebDAV server:
  - **(Recommeded)** [Dufs](https://github.com/sigoden/dufs) - For hosting your own WebDAV server.
  - [Rclone](https://rclone.org/)
